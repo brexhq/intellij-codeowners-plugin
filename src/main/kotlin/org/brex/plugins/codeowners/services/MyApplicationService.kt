@@ -1,6 +1,6 @@
-package org.brex.plugins.template.services
+package org.brex.plugins.codeowners.services
 
-import org.brex.plugins.template.MyBundle
+import org.brex.plugins.codeowners.MyBundle
 
 class MyApplicationService {
 
