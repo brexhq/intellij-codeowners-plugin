@@ -10,10 +10,14 @@
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="org.brex.plugins.codeowners.services.MyApplicationService"/>
         <projectService serviceImplementation="org.brex.plugins.codeowners.services.MyProjectService"/>
+        <fileService serviceImplementation="org.brex.plugins.codeowners.services.FileService" />
     </extensions>
 
     <applicationListeners>
         <listener class="org.brex.plugins.codeowners.listeners.MyProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
+
+        <listener class="org.brex.plugins.codeowners.listeners.FileListener"
+                  topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
     </applicationListeners>
 </idea-plugin>
