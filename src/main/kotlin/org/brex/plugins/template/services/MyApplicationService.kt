@@ -1,6 +1,6 @@
-package org.jetbrains.plugins.template.services
+package org.brex.plugins.template.services
 
-import org.jetbrains.plugins.template.MyBundle
+import org.brex.plugins.template.MyBundle
 
 class MyApplicationService {
 
