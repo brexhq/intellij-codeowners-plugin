@@ -2,6 +2,7 @@ package org.brex.plugins.codeowners.widget
 
 import com.intellij.ide.lightEdit.LightEditCompatible
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
@@ -12,7 +13,7 @@ class CodeOwnersWidgetFactory : StatusBarWidgetFactory {
     override fun getDisplayName() = "CodeOwners Display"
 
     override fun disposeWidget(widget: StatusBarWidget) {
-//        Disposer.dispose(widget)
+        Disposer.dispose(widget)
     }
 
     override fun isAvailable(project: Project) = true
