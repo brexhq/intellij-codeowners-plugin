@@ -17,9 +17,6 @@ import java.awt.event.MouseEvent
 import java.io.File
 
 class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBarWidget.MultipleTextValuesPresentation {
-    private var codeOwnerFile: VirtualFile? = null
-    private var codeOwnerRule: CodeOwnerRule? = null
-
     override fun ID(): String = ID
 
     override fun getTooltipText(): String? = "Click to show in CODEOWNERS file"
@@ -41,6 +38,8 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     }
 
     /** Reload CodeOwners if the current file has changed */
+    private var codeOwnerFile: VirtualFile? = null
+    private var codeOwnerRule: CodeOwnerRule? = null
     private val codeOwners: CodeOwnerRule?
         get() {
             val file = selectedFile ?: return null
