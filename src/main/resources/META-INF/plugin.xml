@@ -20,5 +20,8 @@
         <listener class="org.brex.plugins.codeowners.widget.CodeOwnersWidget"
                   topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
 
+        <listener class="org.brex.plugins.codeowners.listeners.FileListener"
+                  topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+
     </applicationListeners>
 </idea-plugin>
