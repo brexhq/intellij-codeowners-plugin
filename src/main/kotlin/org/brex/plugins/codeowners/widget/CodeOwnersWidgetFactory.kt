@@ -1,6 +1,5 @@
 package org.brex.plugins.codeowners.widget
 
-import com.intellij.ide.lightEdit.LightEditCompatible
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.StatusBar
