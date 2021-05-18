@@ -23,9 +23,17 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     override fun getTooltipText(): String? = "Tooltop!"
     override fun getSelectedValue(): String? {
         val file = selectedFile ?: return null
-        val relPath = File(file?.path).relativeTo(File(project.basePath!!)).toPath()
+        val relPath = File(file.path).relativeTo(File(project.basePath!!)).toPath()
         val codeowners = Codeowners(project.basePath!!).getCodeowners(relPath)
-        return "CodeOwner: ${codeowners.joinToString(",")}"
+        var codeownerStr = if (codeowners !== null) codeowners.owners.first() else "None"
+        codeowners?.owners?.let {
+            if (it.size == 2) {
+                codeownerStr += " & 1 other"
+            } else if (it.size > 2) {
+                codeownerStr += " & ${it.size - 1} others"
+            }
+        }
+        return "CODEOWNERS: $codeownerStr"
     }
 
     override fun getClickConsumer(): Consumer<MouseEvent>? {
@@ -33,8 +41,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     }
 
     override fun getPopupStep(): ListPopup? {
-
-        return JBPopupFactory.getInstance().createListPopup(object: BaseListPopupStep<String>("Foo", "Bar", "Baz") {
+        return JBPopupFactory.getInstance().createListPopup(object : BaseListPopupStep<String>("Foo", "Bar", "Baz") {
             override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<*>? {
                 println(selectedValue)
                 return super.onChosen(selectedValue, finalChoice)

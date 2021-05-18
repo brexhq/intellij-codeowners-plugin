@@ -5,10 +5,12 @@ import java.nio.file.Path
 
 data class CodeownerRule(
     val pattern: String,
-    val owners: List<String>
+    val owners: List<String>,
+    val lineNumber: Int
 ) {
     companion object {
-        fun fromCodeownerLine(line: List<String>) = CodeownerRule(if (line[0] == "*") "**" else line[0], line.drop(1))
+        fun fromCodeownerLine(lineNumber: Int, line: List<String>) =
+            CodeownerRule(if (line[0] == "*") "**" else line[0], line.drop(1), lineNumber)
     }
 }
 
@@ -23,13 +25,14 @@ class Codeowners(val basePath: String) {
 
         return codeownersPath.toFile()
             .readLines()
-            .filter { !it.startsWith("#") }
-            .map { it.split("\\s+".toRegex()) }
-            .filter { it.size >= 2 }
-            .map { CodeownerRule.fromCodeownerLine(it) }
+            .mapIndexed { index, s -> Pair(index, s) }
+            .filter { !it.second.startsWith("#") }
+            .map { Pair(it.first, it.second.split("\\s+".toRegex())) }
+            .filter { it.second.size >= 2 }
+            .map { CodeownerRule.fromCodeownerLine(it.first + 1, it.second) }
     }
 
-    fun getCodeowners(path: Path): List<String> {
+    fun getCodeowners(path: Path): CodeownerRule? {
         val rules = codeownerRules()
         val fs = FileSystems.getDefault()
 
@@ -37,6 +40,6 @@ class Codeowners(val basePath: String) {
             fs.getPathMatcher("glob:${it.pattern}").matches(path)
         }
 
-        return lastMatch?.owners ?: emptyList()
+        return lastMatch
     }
 }
