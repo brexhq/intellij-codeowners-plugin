@@ -7,7 +7,7 @@ import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
 
 class CodeOwnersWidgetFactory : StatusBarWidgetFactory, LightEditCompatible {
-    override fun getId() = "org.brex.plugins.codeowners"
+    override fun getId() = CodeOwnersWidget.ID
 
     override fun getDisplayName() = "CodeOwners Display"
 

@@ -17,7 +17,7 @@
         <listener class="org.brex.plugins.codeowners.listeners.MyProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
 
-        <listener class="org.brex.plugins.codeowners.listeners.FileListener"
+        <listener class="org.brex.plugins.codeowners.widget.CodeOwnersWidget"
                   topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
 
     </applicationListeners>
