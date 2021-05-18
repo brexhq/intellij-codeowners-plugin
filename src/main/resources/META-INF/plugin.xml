@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>org.brex.plugins.codeowners</id>
-    <name>Template</name>
-    <vendor>JetBrains</vendor>
+    <name>CodeOwners</name>
+    <vendor>Brex</vendor>
 
     <!-- Product and plugin compatibility requirements -->
     <!-- https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
@@ -11,6 +11,8 @@
         <applicationService serviceImplementation="org.brex.plugins.codeowners.services.MyApplicationService"/>
         <projectService serviceImplementation="org.brex.plugins.codeowners.services.MyProjectService"/>
         <fileService serviceImplementation="org.brex.plugins.codeowners.services.FileService" />
+        <codeOwnersWidgetFactory implementation="org.brex.plugins.codeowners.widget.CodeOwnersWidgetFactory"/>
+
     </extensions>
 
     <applicationListeners>
@@ -19,5 +21,6 @@
 
         <listener class="org.brex.plugins.codeowners.listeners.FileListener"
                   topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+
     </applicationListeners>
 </idea-plugin>
