@@ -6,7 +6,7 @@ import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
 
-class CodeOwnersWidgetFactory : StatusBarWidgetFactory, LightEditCompatible {
+class CodeOwnersWidgetFactory : StatusBarWidgetFactory {
     override fun getId() = CodeOwnersWidget.ID
 
     override fun getDisplayName() = "CodeOwners Display"
