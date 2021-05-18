@@ -45,13 +45,11 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     override fun getPresentation(): StatusBarWidget.WidgetPresentation? = this
 
     override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
-        println("File opened! ${file.path}")
         myStatusBar.updateWidget(ID())
     }
 
     override fun selectionChanged(event: FileEditorManagerEvent) {
         super.selectionChanged(event)
-        println(event)
         myStatusBar.updateWidget(ID())
     }
 

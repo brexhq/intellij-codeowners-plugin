@@ -3,47 +3,40 @@ package org.brex.plugins.codeowners
 import java.nio.file.FileSystems
 import java.nio.file.Path
 
+data class CodeownerRule(
+    val pattern: String,
+    val owners: List<String>
+) {
+    companion object {
+        fun fromCodeownerLine(line: List<String>) = CodeownerRule(if (line[0] == "*") "**" else line[0], line.drop(1))
+    }
+}
+
 class Codeowners(val basePath: String) {
-    fun codeownerRules(): Map<String, List<String>> {
-        val rules = mutableMapOf<String, List<String>>()
+    fun codeownerRules(): List<CodeownerRule> {
         // TODO: support different paths (e.g. docs/CODEOWNERS)
         val codeownersPath = Path.of(basePath, "CODEOWNERS")
-        if (codeownersPath.toFile().isFile) {
-            codeownersPath.toFile().forEachLine {
-                if (it.startsWith("#")) {
-                    return@forEachLine
-                }
 
-                val delim = Regex("\\s+")
-
-                val splits = it.split(delim).toMutableList()
-
-                if (splits.size < 2) {
-                    return@forEachLine
-                }
-
-                // Special case, if we see a `*` on its own, it should match everything in all dirs
-                if (splits[0] == "*") {
-                    splits[0] = "**"
-                }
-
-                rules[splits[0]] = splits.drop(1)
-            }
+        if (!codeownersPath.toFile().isFile) {
+            return listOf()
         }
-        return rules
+
+        return codeownersPath.toFile()
+            .readLines()
+            .filter { !it.startsWith("#") }
+            .map { it.split("\\s+".toRegex()) }
+            .filter { it.size >= 2 }
+            .map { CodeownerRule.fromCodeownerLine(it) }
     }
 
     fun getCodeowners(path: Path): List<String> {
         val rules = codeownerRules()
-        var codeowners: List<String>? = null
+        val fs = FileSystems.getDefault()
 
-        for ((pattern, owners) in rules) {
-            val matcher = FileSystems.getDefault().getPathMatcher("glob:$pattern")
-            if (matcher.matches(path)) {
-                codeowners = owners
-            }
+        val lastMatch = rules.findLast {
+            fs.getPathMatcher("glob:${it.pattern}").matches(path)
         }
 
-        return codeowners ?: emptyList()
+        return lastMatch?.owners ?: emptyList()
     }
 }
