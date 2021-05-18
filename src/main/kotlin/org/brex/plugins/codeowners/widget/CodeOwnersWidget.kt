@@ -28,6 +28,9 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
 
     override fun getClickConsumer(): Consumer<MouseEvent>? = null
 
+    override fun getPresentation(): StatusBarWidget.WidgetPresentation? = this
+
+    /** Return a popup listing all codeowners for a file */
     override fun getPopupStep(): ListPopup? {
         return JBPopupFactory.getInstance().createListPopup(object : BaseListPopupStep<String>("All Code Owners", codeOwners?.owners) {
             override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<*>? {
@@ -37,6 +40,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
         })
     }
 
+    /** Reload CodeOwners if the current file has changed */
     private val codeOwners: CodeOwnerRule?
         get() {
             val file = selectedFile ?: return null
@@ -48,12 +52,12 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
             return codeOwnerRule
         }
 
-    override fun getPresentation(): StatusBarWidget.WidgetPresentation? = this
-
+    /** Update status bar text when opening a new file */
     override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
         myStatusBar.updateWidget(ID())
     }
 
+    /** Update status bar text when changing switching file */
     override fun selectionChanged(event: FileEditorManagerEvent) {
         super.selectionChanged(event)
         myStatusBar.updateWidget(ID())
@@ -64,11 +68,13 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     }
 }
 
+/** Load codeowners from a file */
 fun codeOwnersFromFile(file: VirtualFile, basePath: String): CodeOwnerRule? {
     val relPath = File(file.path).relativeTo(File(basePath)).toPath()
     return CodeOwners(basePath).getCodeowners(relPath)
 }
 
+/** Describe a list of codeowners */
 fun makeOwnersDescription(codeOwners: CodeOwnerRule?): String {
     val owners = codeOwners?.owners ?: return "None"
     return owners.first() + when {
