@@ -2,6 +2,7 @@ package org.brex.plugins.codeowners.widget
 
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
@@ -17,6 +18,10 @@ import java.awt.event.MouseEvent
 import java.io.File
 
 class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBarWidget.MultipleTextValuesPresentation {
+    companion object {
+        internal const val ID = "org.brex.plugins.codeowners.CodeOwnersWidget"
+    }
+
     override fun ID(): String = ID
 
     override fun getTooltipText(): String? = "Click to show in CODEOWNERS file"
@@ -28,10 +33,14 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     override fun getPresentation(): StatusBarWidget.WidgetPresentation? = this
 
     /** Return a popup listing all codeowners for a file */
-    override fun getPopupStep(): ListPopup? {
-        return JBPopupFactory.getInstance().createListPopup(object : BaseListPopupStep<String>("All Code Owners", codeOwners?.owners) {
+    override fun getPopupStep(): ListPopup {
+        return JBPopupFactory.getInstance().createListPopup(object : BaseListPopupStep<String>("All CODEOWNERS", codeOwners?.owners) {
             override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<*>? {
-                println(selectedValue)
+                val codeownersFile = CodeOwners(project.basePath!!).codeownersFile()
+                if (codeownersFile != null) {
+                    OpenFileDescriptor(project, codeownersFile, codeOwnerRule?.lineNumber ?: 0, 0).navigate(true)
+                }
+
                 return super.onChosen(selectedValue, finalChoice)
             }
         })
@@ -40,13 +49,14 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     /** Reload CodeOwners if the current file has changed */
     private var codeOwnerFile: VirtualFile? = null
     private var codeOwnerRule: CodeOwnerRule? = null
+    private val codeOwnersService: CodeOwners? = project.basePath?.let { CodeOwners(it) }
+
     private val codeOwners: CodeOwnerRule?
         get() {
             val file = selectedFile ?: return null
-            val basePath = project.basePath ?: return null
             if (selectedFile !== codeOwnerFile) {
                 codeOwnerFile = selectedFile
-                codeOwnerRule = codeOwnersFromFile(file, basePath)
+                codeOwnerRule = codeOwnersFromFile(file)
             }
             return codeOwnerRule
         }
@@ -62,15 +72,11 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
         myStatusBar.updateWidget(ID())
     }
 
-    companion object {
-        internal const val ID = "org.brex.plugins.codeowners.CodeOwnersWidget"
+    /** Load codeowners from a file */
+    private fun codeOwnersFromFile(file: VirtualFile): CodeOwnerRule? {
+        val relPath = File(file.path).relativeTo(File(project.basePath!!)).toPath()
+        return codeOwnersService?.getCodeowners(relPath)
     }
-}
-
-/** Load codeowners from a file */
-fun codeOwnersFromFile(file: VirtualFile, basePath: String): CodeOwnerRule? {
-    val relPath = File(file.path).relativeTo(File(basePath)).toPath()
-    return CodeOwners(basePath).getCodeowners(relPath)
 }
 
 /** Describe a list of codeowners */
