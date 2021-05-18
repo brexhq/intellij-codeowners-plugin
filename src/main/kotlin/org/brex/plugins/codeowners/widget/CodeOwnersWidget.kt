@@ -11,43 +11,42 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.impl.status.EditorBasedWidget
 import com.intellij.util.Consumer
-import org.brex.plugins.codeowners.Codeowners
+import org.brex.plugins.codeowners.CodeOwnerRule
+import org.brex.plugins.codeowners.CodeOwners
 import java.awt.event.MouseEvent
 import java.io.File
 
 class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBarWidget.MultipleTextValuesPresentation {
-    override fun ID(): String {
-        return ID
-    }
+    private var codeOwnerFile: VirtualFile? = null
+    private var codeOwnerRule: CodeOwnerRule? = null
 
-    override fun getTooltipText(): String? = "Tooltop!"
-    override fun getSelectedValue(): String? {
-        val file = selectedFile ?: return null
-        val relPath = File(file.path).relativeTo(File(project.basePath!!)).toPath()
-        val codeowners = Codeowners(project.basePath!!).getCodeowners(relPath)
-        var codeownerStr = if (codeowners !== null) codeowners.owners.first() else "None"
-        codeowners?.owners?.let {
-            if (it.size == 2) {
-                codeownerStr += " & 1 other"
-            } else if (it.size > 2) {
-                codeownerStr += " & ${it.size - 1} others"
-            }
-        }
-        return "CODEOWNERS: $codeownerStr"
-    }
+    override fun ID(): String = ID
 
-    override fun getClickConsumer(): Consumer<MouseEvent>? {
-        return null
-    }
+    override fun getTooltipText(): String? = "Click to show in CODEOWNERS file"
+
+    override fun getSelectedValue(): String? = "CODEOWNERS: ${makeOwnersDescription(codeOwners)}"
+
+    override fun getClickConsumer(): Consumer<MouseEvent>? = null
 
     override fun getPopupStep(): ListPopup? {
-        return JBPopupFactory.getInstance().createListPopup(object : BaseListPopupStep<String>("Foo", "Bar", "Baz") {
+        return JBPopupFactory.getInstance().createListPopup(object : BaseListPopupStep<String>("All Code Owners", codeOwners?.owners) {
             override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<*>? {
                 println(selectedValue)
                 return super.onChosen(selectedValue, finalChoice)
             }
         })
     }
+
+    private val codeOwners: CodeOwnerRule?
+        get() {
+            val file = selectedFile ?: return null
+            val basePath = project.basePath ?: return null
+            if (selectedFile !== codeOwnerFile) {
+                codeOwnerFile = selectedFile
+                codeOwnerRule = codeOwnersFromFile(file, basePath)
+            }
+            return codeOwnerRule
+        }
 
     override fun getPresentation(): StatusBarWidget.WidgetPresentation? = this
 
@@ -62,5 +61,19 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
 
     companion object {
         internal const val ID = "org.brex.plugins.codeowners.CodeOwnersWidget"
+    }
+}
+
+fun codeOwnersFromFile(file: VirtualFile, basePath: String): CodeOwnerRule? {
+    val relPath = File(file.path).relativeTo(File(basePath)).toPath()
+    return CodeOwners(basePath).getCodeowners(relPath)
+}
+
+fun makeOwnersDescription(codeOwners: CodeOwnerRule?): String {
+    val owners = codeOwners?.owners ?: return "None"
+    return owners.first() + when {
+        (owners.size == 2) -> " & 1 other"
+        (owners.size > 2) -> " & ${owners.size - 1} others"
+        else -> ""
     }
 }

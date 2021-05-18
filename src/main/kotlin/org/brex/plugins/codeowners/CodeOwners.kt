@@ -3,19 +3,19 @@ package org.brex.plugins.codeowners
 import java.nio.file.FileSystems
 import java.nio.file.Path
 
-data class CodeownerRule(
+data class CodeOwnerRule(
     val pattern: String,
     val owners: List<String>,
     val lineNumber: Int
 ) {
     companion object {
         fun fromCodeownerLine(lineNumber: Int, line: List<String>) =
-            CodeownerRule(if (line[0] == "*") "**" else line[0], line.drop(1), lineNumber)
+            CodeOwnerRule(if (line[0] == "*") "**" else line[0], line.drop(1), lineNumber)
     }
 }
 
-class Codeowners(val basePath: String) {
-    fun codeownerRules(): List<CodeownerRule> {
+class CodeOwners(val basePath: String) {
+    fun codeownerRules(): List<CodeOwnerRule> {
         // TODO: support different paths (e.g. docs/CODEOWNERS)
         val codeownersPath = Path.of(basePath, "CODEOWNERS")
 
@@ -29,10 +29,10 @@ class Codeowners(val basePath: String) {
             .filter { !it.second.startsWith("#") }
             .map { Pair(it.first, it.second.split("\\s+".toRegex())) }
             .filter { it.second.size >= 2 }
-            .map { CodeownerRule.fromCodeownerLine(it.first + 1, it.second) }
+            .map { CodeOwnerRule.fromCodeownerLine(it.first + 1, it.second) }
     }
 
-    fun getCodeowners(path: Path): CodeownerRule? {
+    fun getCodeowners(path: Path): CodeOwnerRule? {
         val rules = codeownerRules()
         val fs = FileSystems.getDefault()
 
