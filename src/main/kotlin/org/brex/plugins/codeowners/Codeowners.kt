@@ -15,6 +15,7 @@ class Codeowners(val basePath: String) {
                 }
 
                 val delim = Regex("\\s+")
+
                 val splits = it.split(delim).toMutableList()
 
                 if (splits.size < 2) {
@@ -26,7 +27,7 @@ class Codeowners(val basePath: String) {
                     splits[0] = "**"
                 }
 
-                rules[splits[0]] = splits[1].split(delim)
+                rules[splits[0]] = splits.drop(1)
             }
         }
         return rules
@@ -35,6 +36,7 @@ class Codeowners(val basePath: String) {
     fun getCodeowners(path: Path): List<String> {
         val rules = codeownerRules()
         var codeowners: List<String>? = null
+
         for ((pattern, owners) in rules) {
             val matcher = FileSystems.getDefault().getPathMatcher("glob:$pattern")
             if (matcher.matches(path)) {
