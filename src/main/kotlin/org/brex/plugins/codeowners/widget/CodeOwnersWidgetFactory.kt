@@ -7,9 +7,6 @@ import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidgetFactory
 
 class CodeOwnersWidgetFactory : StatusBarWidgetFactory, LightEditCompatible {
-    init {
-        println("Factory init")
-    }
     override fun getId() = "org.brex.plugins.codeowners"
 
     override fun getDisplayName() = "CodeOwners Display"
@@ -18,25 +15,9 @@ class CodeOwnersWidgetFactory : StatusBarWidgetFactory, LightEditCompatible {
 //        Disposer.dispose(widget)
     }
 
-    override fun isAvailable(project: Project): Boolean {
-        println("isAvailable")
-        return true
-    }
+    override fun isAvailable(project: Project) = true
 
-    override fun createWidget(project: Project) = CodeOwnersWidget()
+    override fun createWidget(project: Project) = CodeOwnersWidget(project)
 
-    override fun canBeEnabledOn(statusBar: StatusBar): Boolean {
-        println("canBeEnabledOn")
-        return true
-    }
-
-    override fun isEnabledByDefault(): Boolean {
-        println("isEnabledByDefault")
-        return true
-    }
-
-    override fun isConfigurable(): Boolean {
-        println("isConfigurable")
-        return true
-    }
+    override fun canBeEnabledOn(statusBar: StatusBar) = true
 }

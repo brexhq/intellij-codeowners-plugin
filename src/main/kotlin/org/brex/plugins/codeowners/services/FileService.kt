@@ -8,6 +8,5 @@ class FileService(file: VirtualFile) {
 
     init {
         println(MyBundle.message("fileService", file.name))
-        println("u waaaaaaaat")
     }
 }

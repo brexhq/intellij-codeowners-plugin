@@ -10,9 +10,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="org.brex.plugins.codeowners.services.MyApplicationService"/>
         <projectService serviceImplementation="org.brex.plugins.codeowners.services.MyProjectService"/>
-        <fileService serviceImplementation="org.brex.plugins.codeowners.services.FileService" />
-        <codeOwnersWidgetFactory implementation="org.brex.plugins.codeowners.widget.CodeOwnersWidgetFactory"/>
-
+        <statusBarWidgetFactory implementation="org.brex.plugins.codeowners.widget.CodeOwnersWidgetFactory"/>
     </extensions>
 
     <applicationListeners>
