@@ -10,7 +10,7 @@ import com.intellij.openapi.wm.StatusBarWidgetFactory
 class CodeOwnersWidgetFactory : StatusBarWidgetFactory {
     override fun getId() = CodeOwnersWidget.ID
 
-    override fun getDisplayName() = "CodeOwners Display"
+    override fun getDisplayName() = "Code Owners"
 
     override fun disposeWidget(widget: StatusBarWidget) {
         Disposer.dispose(widget)
