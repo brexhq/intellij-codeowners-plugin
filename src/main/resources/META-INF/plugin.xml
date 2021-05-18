@@ -8,7 +8,6 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="org.brex.plugins.codeowners.services.MyApplicationService"/>
         <statusBarWidgetFactory implementation="org.brex.plugins.codeowners.widget.CodeOwnersWidgetFactory"/>
     </extensions>
 </idea-plugin>
