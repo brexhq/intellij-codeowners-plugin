@@ -1,8 +1,8 @@
 package org.brex.plugins.codeowners
 
+import com.brex.plugins.codeowners.Glob
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import java.nio.file.FileSystems
 import java.nio.file.Path
 
 data class CodeOwnerRule(
@@ -12,7 +12,7 @@ data class CodeOwnerRule(
 ) {
     companion object {
         fun fromCodeownerLine(lineNumber: Int, line: List<String>) =
-            CodeOwnerRule(if (line[0] == "*") "**" else line[0], line.drop(1), lineNumber)
+            CodeOwnerRule(line[0], line.drop(1), lineNumber)
     }
 }
 
@@ -29,12 +29,12 @@ class CodeOwners(val basePath: String) {
             .map { CodeOwnerRule.fromCodeownerLine(it.first, it.second) }
     }
 
-    fun getCodeowners(path: Path): CodeOwnerRule? {
+    /** Takes an absolute path and finds a matching CodeOwnerRule, if any */
+    fun getCodeowners(path: String): CodeOwnerRule? {
         val rules = codeownerRules()
-        val fs = FileSystems.getDefault()
 
         val lastMatch = rules.findLast {
-            fs.getPathMatcher("glob:${it.pattern}").matches(path)
+            Glob(basePath, it.pattern, restrictToBaseDir = true, includeChildren = true).matches(path)
         }
 
         return lastMatch

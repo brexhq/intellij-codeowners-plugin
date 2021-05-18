@@ -15,7 +15,6 @@ import com.intellij.util.Consumer
 import org.brex.plugins.codeowners.CodeOwnerRule
 import org.brex.plugins.codeowners.CodeOwners
 import java.awt.event.MouseEvent
-import java.io.File
 
 class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBarWidget.MultipleTextValuesPresentation {
     companion object {
@@ -74,8 +73,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
 
     /** Load codeowners from a file */
     private fun codeOwnersFromFile(file: VirtualFile): CodeOwnerRule? {
-        val relPath = File(file.path).relativeTo(File(project.basePath!!)).toPath()
-        return codeOwnersService?.getCodeowners(relPath)
+        return codeOwnersService?.getCodeowners(file.path)
     }
 }
 
