@@ -19,8 +19,8 @@ data class CodeOwnerRule(
 }
 
 class CodeOwners(val project: Project) {
-    fun codeownerRules(file: VirtualFile): List<CodeOwnerRule> {
-        val codeownersFile = codeownersFile(file) ?: return listOf()
+    private fun codeOwnerRules(file: VirtualFile): List<CodeOwnerRule> {
+        val codeOwnersFile = codeOwnersFile(file) ?: return listOf()
 
         return codeOwnersFile.toNioPath().toFile()
             .readLines()
@@ -36,11 +36,9 @@ class CodeOwners(val project: Project) {
         val rules = codeOwnerRules(file)
         val basePath = getBaseDir(file) ?: return null
 
-        val lastMatch = rules.findLast {
+        return rules.findLast {
             Glob(basePath, it.pattern, restrictToBaseDir = true, includeChildren = true).matches(file.path)
         }
-
-        return lastMatch
     }
 
     fun codeOwnersFile(relativeTo: VirtualFile?): VirtualFile? {
@@ -51,7 +49,7 @@ class CodeOwners(val project: Project) {
     }
 
     /** Gets base dir relative to a given project file */
-    fun getBaseDir(relativeTo: VirtualFile?): String? {
+    private fun getBaseDir(relativeTo: VirtualFile?): String? {
         val r = relativeTo ?: return null
         return ModuleUtil.findModuleForFile(r, project)?.guessModuleDir()?.toNioPath().toString()
     }
