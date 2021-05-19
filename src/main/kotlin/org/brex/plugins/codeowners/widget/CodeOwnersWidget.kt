@@ -1,5 +1,6 @@
 package org.brex.plugins.codeowners.widget
 
+import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
@@ -50,7 +51,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     }
 
     private fun goToOwner() {
-        val codeOwnersFile = codeOwnersService?.codeownersFile()
+        val codeOwnersFile = codeOwnersService.codeownersFile(selectedFile)
         if (codeOwnersFile != null) {
             OpenFileDescriptor(project, codeOwnersFile, codeOwnerRule?.lineNumber ?: 0, 0).navigate(true)
         }
@@ -59,7 +60,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     /** Reload CodeOwners if the current file has changed */
     private var codeOwnerFile: VirtualFile? = null
     private var codeOwnerRule: CodeOwnerRule? = null
-    private val codeOwnersService: CodeOwners? = project.basePath?.let { CodeOwners(it) }
+    private val codeOwnersService: CodeOwners = CodeOwners(project)
 
     private fun getCodeOwners(): CodeOwnerRule? {
         val file = selectedFile ?: return null
@@ -83,7 +84,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
 
     /** Load code owners from a file */
     private fun codeOwnersFromFile(file: VirtualFile): CodeOwnerRule? {
-        return codeOwnersService?.getCodeowners(file.path)
+        return codeOwnersService.getCodeowners(file)
     }
 }
 
