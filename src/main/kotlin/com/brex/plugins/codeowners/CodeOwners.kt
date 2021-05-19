@@ -13,7 +13,7 @@ data class CodeOwnerRule(
     val lineNumber: Int
 ) {
     companion object {
-        fun fromCodeownerLine(lineNumber: Int, line: List<String>) =
+        fun fromCodeOwnerLine(lineNumber: Int, line: List<String>) =
             CodeOwnerRule(line[0], line.drop(1), lineNumber)
     }
 }
@@ -22,18 +22,18 @@ class CodeOwners(val project: Project) {
     fun codeownerRules(file: VirtualFile): List<CodeOwnerRule> {
         val codeownersFile = codeownersFile(file) ?: return listOf()
 
-        return codeownersFile.toNioPath().toFile()
+        return codeOwnersFile.toNioPath().toFile()
             .readLines()
             .mapIndexed { index, s -> Pair(index, s) }
             .filter { !it.second.startsWith("#") }
             .map { Pair(it.first, it.second.split("\\s+".toRegex())) }
             .filter { it.second.size >= 2 }
-            .map { CodeOwnerRule.fromCodeownerLine(it.first, it.second) }
+            .map { CodeOwnerRule.fromCodeOwnerLine(it.first, it.second) }
     }
 
     /** Takes an absolute path and finds a matching CodeOwnerRule, if any */
-    fun getCodeowners(file: VirtualFile): CodeOwnerRule? {
-        val rules = codeownerRules(file)
+    fun getCodeOwners(file: VirtualFile): CodeOwnerRule? {
+        val rules = codeOwnerRules(file)
         val basePath = getBaseDir(file) ?: return null
 
         val lastMatch = rules.findLast {
@@ -43,11 +43,11 @@ class CodeOwners(val project: Project) {
         return lastMatch
     }
 
-    fun codeownersFile(relativeTo: VirtualFile?): VirtualFile? {
+    fun codeOwnersFile(relativeTo: VirtualFile?): VirtualFile? {
         val baseDir = getBaseDir(relativeTo) ?: return null
         // TODO: support different paths (e.g. docs/CODEOWNERS)
-        val codeownersPath = Path.of(baseDir, "CODEOWNERS")
-        return LocalFileSystem.getInstance().findFileByNioFile(codeownersPath)
+        val codeOwnersPath = Path.of(baseDir, "CODEOWNERS")
+        return LocalFileSystem.getInstance().findFileByNioFile(codeOwnersPath)
     }
 
     /** Gets base dir relative to a given project file */

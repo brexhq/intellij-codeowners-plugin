@@ -56,7 +56,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
 
     /** Open the CODEOWNERS file, and navigate to the line which defines the owner of the current file */
     private fun goToOwner() {
-        val codeOwnersFile = codeOwnersService.codeownersFile(selectedFile)
+        val codeOwnersFile = codeOwnersService.codeOwnersFile(selectedFile)
         if (codeOwnersFile != null) {
             OpenFileDescriptor(project, codeOwnersFile, codeOwnerRule?.lineNumber ?: 0, 0).navigate(true)
         }
@@ -67,7 +67,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
         val file = selectedFile ?: return null
         if (file != codeOwnerFile) {
             codeOwnerFile = selectedFile
-            codeOwnerRule = codeOwnersService.getCodeowners(file)
+            codeOwnerRule = codeOwnersService.getCodeOwners(file)
         }
         return codeOwnerRule
     }
