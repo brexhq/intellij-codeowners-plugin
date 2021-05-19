@@ -1,5 +1,7 @@
-package org.brex.plugins.codeowners.widget
+package com.brex.plugins.codeowners.widget
 
+import com.brex.plugins.codeowners.CodeOwnerRule
+import com.brex.plugins.codeowners.CodeOwners
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
@@ -12,8 +14,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.impl.status.EditorBasedWidget
 import com.intellij.util.Consumer
-import org.brex.plugins.codeowners.CodeOwnerRule
-import org.brex.plugins.codeowners.CodeOwners
 import java.awt.event.MouseEvent
 
 class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBarWidget.MultipleTextValuesPresentation {

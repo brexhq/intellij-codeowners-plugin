@@ -1,4 +1,4 @@
-package org.brex.plugins.codeowners
+package com.brex.plugins.codeowners
 
 import java.io.File
 import java.util.BitSet

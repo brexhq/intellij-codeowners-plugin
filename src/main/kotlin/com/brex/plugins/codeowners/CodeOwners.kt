@@ -1,4 +1,4 @@
-package org.brex.plugins.codeowners
+package com.brex.plugins.codeowners
 
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project

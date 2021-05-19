@@ -1,4 +1,4 @@
-package org.brex.plugins.codeowners
+package com.brex.plugins.codeowners
 
 import com.intellij.AbstractBundle
 import org.jetbrains.annotations.NonNls

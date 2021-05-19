@@ -1,4 +1,4 @@
-package org.brex.plugins.codeowners.widget
+package com.brex.plugins.codeowners.widget
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
