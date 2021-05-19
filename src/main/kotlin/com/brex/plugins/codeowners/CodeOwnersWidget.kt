@@ -9,29 +9,22 @@ import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.impl.status.EditorBasedWidget
+import com.intellij.refactoring.listeners.RefactoringEventData
+import com.intellij.refactoring.listeners.RefactoringEventListener
 import com.intellij.util.Consumer
 import java.awt.event.MouseEvent
 
-class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBarWidget.MultipleTextValuesPresentation {
-    /** Reload CodeOwners if the current file has changed */
-    private var codeOwnerFile: VirtualFile? = null
-    private var codeOwnerRule: CodeOwnerRule? = null
+class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBarWidget.MultipleTextValuesPresentation, RefactoringEventListener {
+    private var currentFilePath: String? = null
+    private var currentFileRule: CodeOwnerRule? = null
     private val codeOwnersService: CodeOwners = CodeOwners(project)
 
-    companion object {
-        internal const val ID = "org.brex.plugins.codeowners.CodeOwnersWidget"
-
-        /** Describe a list of code owners */
-        private fun makeOwnersDescription(codeOwners: CodeOwnerRule?): String {
-            val owners = codeOwners?.owners ?: return "None"
-            return owners.first() + when {
-                (owners.size == 2) -> " & 1 other"
-                (owners.size > 2) -> " & ${owners.size - 1} others"
-                else -> ""
-            }
-        }
+    override fun install(statusBar: StatusBar) {
+        super.install(statusBar)
+        myConnection.subscribe(RefactoringEventListener.REFACTORING_EVENT_TOPIC, this)
     }
 
     override fun ID() = ID
@@ -66,29 +59,42 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     private fun goToOwner() {
         val codeOwnersFile = codeOwnersService.findCodeOwnersFile(selectedFile)
         if (codeOwnersFile != null) {
-            OpenFileDescriptor(project, codeOwnersFile, codeOwnerRule?.lineNumber ?: 0, 0).navigate(true)
+            OpenFileDescriptor(project, codeOwnersFile, currentFileRule?.lineNumber ?: 0, 0).navigate(true)
         }
     }
 
     /** Get CodeOwner rule for the currently opened file */
     private fun getCurrentCodeOwnerRule(): CodeOwnerRule? {
+        // Reload CodeOwners if the current file has changed
         val file = selectedFile ?: return null
-        if (file != codeOwnerFile) {
-            codeOwnerFile = selectedFile
-            codeOwnerRule = codeOwnersService.getCodeOwnersRule(file)
+        if (file.path != currentFilePath) {
+            currentFilePath = file.path
+            currentFileRule = codeOwnersService.getCodeOwnersRule(file)
         }
-        return codeOwnerRule
+        return currentFileRule
     }
 
-    /** Update status bar text when opening a new file */
-    override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
-        myStatusBar.updateWidget(ID())
+    // Listen to Editor events and update the status bar when switching or renaming files
+    private fun update() = myStatusBar.updateWidget(ID())
+    override fun fileOpened(source: FileEditorManager, file: VirtualFile) = update()
+    override fun selectionChanged(event: FileEditorManagerEvent) = update()
+    override fun undoRefactoring(refactoringId: String) = update()
+    override fun refactoringDone(refactoringId: String, afterData: RefactoringEventData?) = update()
+    override fun refactoringStarted(refactoringId: String, beforeData: RefactoringEventData?) {}
+    override fun conflictsDetected(refactoringId: String, conflictsData: RefactoringEventData) {}
+
+    companion object {
+        internal const val ID = "org.brex.plugins.codeowners.CodeOwnersWidget"
+
+        /** Describe a list of code owners */
+        private fun makeOwnersDescription(codeOwners: CodeOwnerRule?): String {
+            val owners = codeOwners?.owners ?: return "None"
+            return owners.first() + when {
+                (owners.size == 2) -> " & 1 other"
+                (owners.size > 2) -> " & ${owners.size - 1} others"
+                else -> ""
+            }
+        }
     }
 
-    /** Update status bar text when changing switching file */
-    override fun selectionChanged(event: FileEditorManagerEvent) {
-        super.selectionChanged(event)
-        myStatusBar.updateWidget(ID())
-    }
 }
-
