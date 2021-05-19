@@ -1,6 +1,5 @@
 package org.brex.plugins.codeowners
 
-import com.brex.plugins.codeowners.Glob
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessModuleDir

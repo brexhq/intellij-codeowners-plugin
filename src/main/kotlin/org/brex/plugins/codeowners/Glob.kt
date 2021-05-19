@@ -1,4 +1,4 @@
-package com.brex.plugins.codeowners
+package org.brex.plugins.codeowners
 
 import java.io.File
 import java.util.BitSet
@@ -13,8 +13,12 @@ import java.util.BitSet
  * Settings `restrictToBaseDir` and `includeChildren` to true should yield gitignore-mostly-compatible pattern
  * (leading "\#", "\!", trailing "\ " were "left out" + there is no distinction between files & directories).
  */
-internal data class Glob(val baseDir: String, val pattern: String, val restrictToBaseDir: Boolean = false,
-    val includeChildren: Boolean = false) {
+internal data class Glob(
+    val baseDir: String,
+    val pattern: String,
+    val restrictToBaseDir: Boolean = false,
+    val includeChildren: Boolean = false
+) {
 
     companion object {
 
@@ -23,8 +27,8 @@ internal data class Glob(val baseDir: String, val pattern: String, val restrictT
         /**
          * @return everything before the first segment containing * (or an empty string if there is no such segment)
          */
-        fun prefix(pattern: String) = pattern.removePrefix("!").removeSuffix("/").let {
-            val split = it.split("/")
+        fun prefix(pattern: String) = pattern.removePrefix("!").removeSuffix("/").let { withoutPrefix ->
+            val split = withoutPrefix.split("/")
             val wildcardIndex = split.indexOfFirst { it.contains("*") }.let {
                 if (it == -1 && split.size > 1) split.size - 1 else it
             }
@@ -48,8 +52,9 @@ internal data class Glob(val baseDir: String, val pattern: String, val restrictT
             .removeSuffix("/")
             // *.js -> **/*.js
             // include children -> <original pattern>/**
-            .let { if (it.startsWith("*") && !it.contains("/")) "**/$it" else
-                if (includeChildren) slashJoin(it, "**") else it }
+            .let {
+                if (it.startsWith("*") && !it.contains("/")) "**/$it" else if (includeChildren) slashJoin(it, "**") else it
+            }
             // collapse **/** (if any)
             .replace(Regex("(/[*][*]){2,}/"), "/**/").replace("**/**/", "**/").replace("/**/**", "/**")
         val canonicalBaseDir = when {
@@ -58,8 +63,10 @@ internal data class Glob(val baseDir: String, val pattern: String, val restrictT
             prefix.startsWith("/") -> File(prefix) // absolute path
             else -> File(slashJoin(baseDir, prefix))
         }.canonicalPath
-        val expectedPath = slashJoin(slash(canonicalBaseDir),
-            if (restrictToBaseDir) pattern else pattern.substring(prefix.length))
+        val expectedPath = slashJoin(
+            slash(canonicalBaseDir),
+            if (restrictToBaseDir) pattern else pattern.substring(prefix.length)
+        )
         state = expectedPath.split('/').map {
             if (it == "**") State(Regex(".*"), true) else
                 State(Regex(it.replace(Regex("([^a-zA-Z0-9 *])"), "\\\\$1").replace("*", ".*")), false)
