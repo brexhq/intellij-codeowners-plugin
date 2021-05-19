@@ -1,6 +1,5 @@
 package org.brex.plugins.codeowners.widget
 
-import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
@@ -18,23 +17,28 @@ import org.brex.plugins.codeowners.CodeOwners
 import java.awt.event.MouseEvent
 
 class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBarWidget.MultipleTextValuesPresentation {
+    /** Reload CodeOwners if the current file has changed */
+    private var codeOwnerFile: VirtualFile? = null
+    private var codeOwnerRule: CodeOwnerRule? = null
+    private val codeOwnersService: CodeOwners = CodeOwners(project)
+
     companion object {
         internal const val ID = "org.brex.plugins.codeowners.CodeOwnersWidget"
     }
 
-    override fun ID(): String = ID
+    override fun ID() = ID
 
-    override fun getTooltipText(): String? = "Click to show in CODEOWNERS file"
+    override fun getTooltipText() = "Click to show in CODEOWNERS file"
 
-    override fun getSelectedValue(): String? = "CODEOWNERS: ${makeOwnersDescription(getCodeOwners())}"
+    override fun getSelectedValue() = "CODEOWNERS: ${makeOwnersDescription(getCurrentCodeOwnerRule())}"
 
     override fun getClickConsumer(): Consumer<MouseEvent>? = null
 
-    override fun getPresentation(): StatusBarWidget.WidgetPresentation? = this
+    override fun getPresentation(): StatusBarWidget.WidgetPresentation = this
 
     /** Return a popup listing all codeowners for a file */
     override fun getPopupStep(): ListPopup? {
-        val owners = getCodeOwners()
+        val owners = getCurrentCodeOwnerRule()
         if (owners === null || owners.owners.size <= 1) {
             // Not sure if there's a better place to handle clicking when there's
             // only one owner.
@@ -50,6 +54,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
         })
     }
 
+    /** Open the CODEOWNERS file, and navigate to the line which defines the owner of the current file */
     private fun goToOwner() {
         val codeOwnersFile = codeOwnersService.codeownersFile(selectedFile)
         if (codeOwnersFile != null) {
@@ -57,16 +62,12 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
         }
     }
 
-    /** Reload CodeOwners if the current file has changed */
-    private var codeOwnerFile: VirtualFile? = null
-    private var codeOwnerRule: CodeOwnerRule? = null
-    private val codeOwnersService: CodeOwners = CodeOwners(project)
-
-    private fun getCodeOwners(): CodeOwnerRule? {
+    /** Get CodeOwner rule for the currently opened file */
+    private fun getCurrentCodeOwnerRule(): CodeOwnerRule? {
         val file = selectedFile ?: return null
         if (file != codeOwnerFile) {
             codeOwnerFile = selectedFile
-            codeOwnerRule = codeOwnersFromFile(file)
+            codeOwnerRule = codeOwnersService.getCodeowners(file)
         }
         return codeOwnerRule
     }
@@ -80,11 +81,6 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     override fun selectionChanged(event: FileEditorManagerEvent) {
         super.selectionChanged(event)
         myStatusBar.updateWidget(ID())
-    }
-
-    /** Load code owners from a file */
-    private fun codeOwnersFromFile(file: VirtualFile): CodeOwnerRule? {
-        return codeOwnersService.getCodeowners(file)
     }
 }
 
