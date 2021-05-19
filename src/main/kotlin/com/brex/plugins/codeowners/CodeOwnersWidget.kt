@@ -28,7 +28,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
 
     override fun getTooltipText() = "Click to show in CODEOWNERS file"
 
-    override fun getSelectedValue() = "CODEOWNERS: ${makeOwnersDescription(getCurrentCodeOwnerRule())}"
+    override fun getSelectedValue() = "Owner: ${makeOwnersDescription(getCurrentCodeOwnerRule())}"
 
     override fun getClickConsumer(): Consumer<MouseEvent>? = null
 
