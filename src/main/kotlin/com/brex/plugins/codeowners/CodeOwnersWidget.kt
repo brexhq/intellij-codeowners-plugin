@@ -96,5 +96,4 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
             }
         }
     }
-
 }

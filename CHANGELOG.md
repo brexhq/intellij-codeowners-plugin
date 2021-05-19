@@ -5,6 +5,7 @@
 ### Added
 
 - More extensive README
+- Shortened status bar text to "Owner:"
 
 ### Fixed
 

@@ -11,9 +11,10 @@ class CodeOwnersWidgetFactory : StatusBarWidgetFactory {
 
     override fun getDisplayName() = "Code Owners"
 
-    override fun disposeWidget(widget: StatusBarWidget) {
-        Disposer.dispose(widget)
-    }
+    override fun disposeWidget(widget: StatusBarWidget) = Disposer.dispose(widget)
+
+    // TODO: We can use this to only enable the widget if any project module contains a CODEOWNER, but then we have to handle all cases where CODEOWNERS gets added
+    // override fun isAvailable(project: Project) = ModuleManager.getInstance(project).modules.any() { module -> CodeOwners(project).findCodeOwnersFile(module.moduleFile) !== null }
 
     override fun isAvailable(project: Project) = true
 
