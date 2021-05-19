@@ -24,11 +24,13 @@ class CodeOwners(private val project: Project) {
 
         return codeOwnersFile.toNioPath().toFile()
             .readLines()
+            .asSequence()
             .mapIndexed { index, s -> Pair(index, s) }
-            .filter { !it.second.startsWith("#") }
+            .filter { it.second.isNotEmpty() && !it.second.startsWith("#") }
             .map { Pair(it.first, it.second.split("\\s+".toRegex())) }
             .filter { it.second.size >= 2 }
             .map { CodeOwnerRule.fromCodeOwnerLine(it.first, it.second) }
+            .toList()
     }
 
     /** Given a file, find the CodeOwner file which should govern its ownership, if any */
