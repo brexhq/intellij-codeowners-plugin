@@ -64,7 +64,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
 
     private fun getCodeOwners(): CodeOwnerRule? {
         val file = selectedFile ?: return null
-        if (selectedFile !== codeOwnerFile) {
+        if (file != codeOwnerFile) {
             codeOwnerFile = selectedFile
             codeOwnerRule = codeOwnersFromFile(file)
         }
