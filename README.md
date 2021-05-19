@@ -1,7 +1,9 @@
 # CODEOWNERS IntelliJ plugin
 
+![demo](demo.gif)
+
 <!-- Plugin description -->
- 
+
 The CodeOwners plugin adds a widget to your IDE's status bar which shows which users or teams own the currently opened
 file, as defined by your project's [CODEOWNERS file](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-code-owners). 
 
