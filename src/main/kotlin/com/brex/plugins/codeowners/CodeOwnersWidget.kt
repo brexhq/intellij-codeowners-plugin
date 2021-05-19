@@ -9,6 +9,7 @@ import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.wm.StatusBar
 import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.impl.status.EditorBasedWidget
@@ -58,9 +59,8 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     /** Open the CODEOWNERS file, and navigate to the line which defines the owner of the current file */
     private fun goToOwner() {
         val codeOwnersFile = codeOwnersService.findCodeOwnersFile(selectedFile)
-        if (codeOwnersFile != null) {
-            OpenFileDescriptor(project, codeOwnersFile, currentFileRule?.lineNumber ?: 0, 0).navigate(true)
-        }
+        val vf = codeOwnersFile?.toPath()?.let { VirtualFileManager.getInstance().findFileByNioPath(it) } ?: return
+        OpenFileDescriptor(project, vf, currentFileRule?.lineNumber ?: 0, 0).navigate(true)
     }
 
     /** Get CodeOwner rule for the currently opened file */
@@ -69,7 +69,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
         val file = selectedFile ?: return null
         if (file.path != currentFilePath) {
             currentFilePath = file.path
-            currentFileRule = codeOwnersService.getCodeOwnersRule(file)
+            currentFileRule = codeOwnersService.getCodeOwners(file)
         }
         return currentFileRule
     }
