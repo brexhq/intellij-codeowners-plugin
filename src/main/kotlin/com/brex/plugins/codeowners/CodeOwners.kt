@@ -18,7 +18,7 @@ data class CodeOwnerRule(
     }
 }
 
-class CodeOwners(val project: Project) {
+class CodeOwners(private val project: Project) {
     private fun codeOwnerRules(file: VirtualFile): List<CodeOwnerRule> {
         val codeOwnersFile = codeOwnersFile(file) ?: return listOf()
 

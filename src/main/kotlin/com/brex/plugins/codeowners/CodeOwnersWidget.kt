@@ -1,7 +1,5 @@
-package com.brex.plugins.codeowners.widget
+package com.brex.plugins.codeowners
 
-import com.brex.plugins.codeowners.CodeOwnerRule
-import com.brex.plugins.codeowners.CodeOwners
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
