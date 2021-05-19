@@ -22,6 +22,16 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
 
     companion object {
         internal const val ID = "org.brex.plugins.codeowners.CodeOwnersWidget"
+
+        /** Describe a list of code owners */
+        private fun makeOwnersDescription(codeOwners: CodeOwnerRule?): String {
+            val owners = codeOwners?.owners ?: return "None"
+            return owners.first() + when {
+                (owners.size == 2) -> " & 1 other"
+                (owners.size > 2) -> " & ${owners.size - 1} others"
+                else -> ""
+            }
+        }
     }
 
     override fun ID() = ID
@@ -34,7 +44,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
 
     override fun getPresentation(): StatusBarWidget.WidgetPresentation = this
 
-    /** Return a popup listing all codeowners for a file */
+    /** Return a popup listing all code owners for a file */
     override fun getPopupStep(): ListPopup? {
         val owners = getCurrentCodeOwnerRule()
         if (owners === null || owners.owners.size <= 1) {
@@ -54,7 +64,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
 
     /** Open the CODEOWNERS file, and navigate to the line which defines the owner of the current file */
     private fun goToOwner() {
-        val codeOwnersFile = codeOwnersService.codeOwnersFile(selectedFile)
+        val codeOwnersFile = codeOwnersService.findCodeOwnersFile(selectedFile)
         if (codeOwnersFile != null) {
             OpenFileDescriptor(project, codeOwnersFile, codeOwnerRule?.lineNumber ?: 0, 0).navigate(true)
         }
@@ -65,7 +75,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
         val file = selectedFile ?: return null
         if (file != codeOwnerFile) {
             codeOwnerFile = selectedFile
-            codeOwnerRule = codeOwnersService.getCodeOwners(file)
+            codeOwnerRule = codeOwnersService.getCodeOwnersRule(file)
         }
         return codeOwnerRule
     }
@@ -82,12 +92,3 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     }
 }
 
-/** Describe a list of code owners */
-fun makeOwnersDescription(codeOwners: CodeOwnerRule?): String {
-    val owners = codeOwners?.owners ?: return "None"
-    return owners.first() + when {
-        (owners.size == 2) -> " & 1 other"
-        (owners.size > 2) -> " & ${owners.size - 1} others"
-        else -> ""
-    }
-}
