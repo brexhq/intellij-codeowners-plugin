@@ -7,11 +7,12 @@
 - More extensive description
 - A custom icon
 - Shortened status bar text to "Owner:"
+- Support all Github-supported CODEOWNER file locations
 
 ### Fixed
 
-- Update code owner display on file rename
-- Support all Github-supported CODEOWNER file locations
+- Code owner display is now updated on file rename
+- Owners are now found correctly when modules are inside other modules 
 
 ## [0.2.0]
 
