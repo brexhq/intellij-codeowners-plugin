@@ -4,12 +4,14 @@
 
 ### Added
 
-- More extensive README
+- More extensive description
+- A custom icon
 - Shortened status bar text to "Owner:"
 
 ### Fixed
 
 - Update code owner display on file rename
+- Support all Github-supported CODEOWNER file locations
 
 ## [0.2.0]
 
