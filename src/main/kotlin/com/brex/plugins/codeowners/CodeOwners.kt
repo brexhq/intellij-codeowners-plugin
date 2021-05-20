@@ -1,10 +1,11 @@
 package com.brex.plugins.codeowners
 
-import com.intellij.openapi.module.ModuleUtil
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessModuleDir
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.io.size
 import java.io.File
 import java.nio.file.Path
 
@@ -48,9 +49,13 @@ class CodeOwners(private val project: Project) {
             .toList()
     }
 
-    /** Gets base dir relative to a given project file */
+    /** Find the top-most module directory which contains the given file */
     private fun getBaseDir(relativeTo: VirtualFile?): String? {
-        val r = relativeTo ?: return null
-        return ModuleUtil.findModuleForFile(r, project)?.guessModuleDir()?.toNioPath().toString()
+        val relPath = relativeTo?.toNioPath() ?: return null
+        return ModuleManager.getInstance(project).sortedModules
+            .mapNotNull { it.guessModuleDir()?.toNioPath() }
+            .filter { relPath.startsWith(it) }
+            .minBy { it.size() }
+            .toString()
     }
 }
