@@ -10,4 +10,8 @@
     <extensions defaultExtensionNs="com.intellij">
         <statusBarWidgetFactory implementation="com.brex.plugins.codeowners.CodeOwnersWidgetFactory"/>
     </extensions>
+    <applicationListeners>
+        <listener class="com.brex.plugins.codeowners.CodeOwnersProjectManagerListener"
+                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    </applicationListeners>
 </idea-plugin>
