@@ -12,7 +12,8 @@
 ### Fixed
 
 - Code owner display is now updated on file rename
-- Owners are now found correctly when modules are inside other modules 
+- Owners are now found correctly when modules are inside other modules
+- Status bar is hidden when a project has no CODEOWNERS files
 
 ## [0.2.0]
 
