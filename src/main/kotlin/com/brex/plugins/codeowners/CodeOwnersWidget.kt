@@ -32,7 +32,16 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
 
     override fun getTooltipText() = "Click to show in CODEOWNERS file"
 
-    override fun getSelectedValue() = "Owner: ${makeOwnersDescription(getCurrentCodeOwnerRule())}"
+    override fun getSelectedValue(): String {
+        val owners = getCurrentCodeOwnerRule()?.owners ?: return "Owner: None"
+        val first = owners.first()
+        val numOthers = owners.size - 1
+        return when {
+            (numOthers == 1) -> "Owners: $first & 1 other"
+            (numOthers > 1) -> "Owners: $first & $numOthers others"
+            else -> "Owner: $first"
+        }
+    }
 
     override fun getClickConsumer(): Consumer<MouseEvent>? = null
 
@@ -85,15 +94,5 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
 
     companion object {
         internal const val ID = "org.brex.plugins.codeowners.CodeOwnersWidget"
-
-        /** Describe a list of code owners */
-        private fun makeOwnersDescription(codeOwners: CodeOwnerRule?): String {
-            val owners = codeOwners?.owners ?: return "None"
-            return owners.first() + when {
-                (owners.size == 2) -> " & 1 other"
-                (owners.size > 2) -> " & ${owners.size - 1} others"
-                else -> ""
-            }
-        }
     }
 }

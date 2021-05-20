@@ -6,7 +6,7 @@
 
 - More extensive description
 - A custom icon
-- Shortened status bar text to "Owner:"
+- Shortened status bar text to "Owner(s):"
 - Support all Github-supported CODEOWNER file locations
 
 ### Fixed
