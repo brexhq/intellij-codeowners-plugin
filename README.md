@@ -12,6 +12,16 @@ open file's ownership.
 
 <!-- Plugin description end -->
 
+### Installing from the Releases page
+
+To install the JAR from the [releases](releases) page directly:
+
+1. Download the [latest release](releases/latest)
+2. Open IntelliJ
+3. Open Preferences -> Plugins
+4. Click the cog icon in the top right
+5. Click "Install from disk"
+6. Find and open the .JAR file you downloaded.
 
 ### Building and installing manually
 
@@ -22,11 +32,8 @@ To build and install this plugin yourself instead of installing from the Plugins
 3. Run using the "Run Plugin" configuration.
 4. If this succeeds, a new IntelliJ instance should open with the plugin installed, which you can close.
 5. Check that a .jar file is present in `./build/libs`
-6. In your IntelliJ editor, open Plugins, click the cog icon, click install from disk, and select the .jar file.
+6. Install manually as described above 
 
 ### Known issues
 
 - May not work correctly for modules containing multiple source roots
-- Doesn't support all valid CODEOWNERS file locations
-- Displays even when no modules have CODEOWNERS
-- Module:CODEOWNERS must be 1:1

@@ -1,16 +1,22 @@
 # CODEOWNERS plugin Changelog
 
-## [0.3.2]
+## [0.3.4]
 
 ### Fixed
 
-- Fixes an exception being thrown when trying to get the base directory for the module file
+- Fix a potential reliability issue in checking which the currently open file is
 
 ## [0.3.3]
 
 ### Fixed
 
 - Fix various bugs which would cause the plugin to stop working.
+
+## [0.3.2]
+
+### Fixed
+
+- Fixes an exception being thrown when trying to get the base directory for the module file
 
 ## [0.3.1]
 
