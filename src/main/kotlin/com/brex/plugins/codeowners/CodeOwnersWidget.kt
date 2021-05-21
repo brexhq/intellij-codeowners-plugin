@@ -90,7 +90,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
         // sometimes the EditorBasedWidget loses its ability to find the currently selected file.
         // Therefore, we allow editor events to pass in the switched-to file, which seems to be
         // more reliable.
-        currentOrSelectedFile = file ?: selectedFile
+        currentOrSelectedFile = file ?: selectedFile ?: currentOrSelectedFile
         myStatusBar.updateWidget(ID())
     }
     // Listen to Editor events and update the status bar when switching or renaming files
