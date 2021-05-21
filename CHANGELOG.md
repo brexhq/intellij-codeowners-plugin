@@ -1,10 +1,11 @@
 # CODEOWNERS plugin Changelog
 
-## [0.4.0]
+## [0.3.1]
 
 ### Fixed
 
 - Don't show any text in the status bar if selected file is null
+- Fixed a bug where the CODEOWNERS file could not be found.
 
 ## [0.3.0]
 

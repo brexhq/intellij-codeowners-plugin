@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessModuleDir
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.io.size
 import java.io.File
 import java.nio.file.Path
 
@@ -55,7 +54,7 @@ class CodeOwners(private val project: Project) {
         return ModuleManager.getInstance(project).sortedModules
             .mapNotNull { it.guessModuleDir()?.toNioPath() }
             .filter { relPath.startsWith(it) }
-            .minBy { it.size() }
+            .minBy { it.toList().size }
             .toString()
     }
 }
