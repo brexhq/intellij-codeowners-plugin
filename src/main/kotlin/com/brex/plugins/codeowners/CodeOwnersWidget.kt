@@ -33,6 +33,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     override fun getTooltipText() = "Click to show in CODEOWNERS file"
 
     override fun getSelectedValue(): String {
+        if (selectedFile === null) return ""
         val owners = getCurrentCodeOwnerRule()?.owners ?: return "Owner: None"
         val first = owners.first()
         val numOthers = owners.size - 1

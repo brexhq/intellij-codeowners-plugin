@@ -1,5 +1,11 @@
 # CODEOWNERS plugin Changelog
 
+## [0.4.0]
+
+### Fixed
+
+- Don't show any text in the status bar if selected file is null
+
 ## [0.3.0]
 
 ### Added
