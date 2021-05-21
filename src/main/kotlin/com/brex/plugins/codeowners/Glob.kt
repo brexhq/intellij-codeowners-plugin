@@ -53,7 +53,9 @@ internal data class Glob(
             // *.js -> **/*.js
             // include children -> <original pattern>/**
             .let {
-                if (it.startsWith("*") && !it.contains("/")) "**/$it" else if (includeChildren) slashJoin(it, "**") else it
+                if (it.startsWith("*") && !it.contains("/")) "**/$it"
+                else if (includeChildren) slashJoin(it, "**")
+                else it
             }
             // collapse **/** (if any)
             .replace(Regex("(/[*][*]){2,}/"), "/**/").replace("**/**/", "**/").replace("/**/**", "/**")
@@ -68,8 +70,8 @@ internal data class Glob(
             if (restrictToBaseDir) pattern else pattern.substring(prefix.length)
         )
         state = expectedPath.split('/').map {
-            if (it == "**") State(Regex(".*"), true) else
-                State(Regex(it.replace(Regex("([^a-zA-Z0-9 *])"), "\\\\$1").replace("*", ".*")), false)
+            if (it == "**") State(Regex(".*"), true)
+            else State(Regex(it.replace(Regex("([^a-zA-Z0-9 *])"), "\\\\$1").replace("*", ".*")), false)
         }
     }
 

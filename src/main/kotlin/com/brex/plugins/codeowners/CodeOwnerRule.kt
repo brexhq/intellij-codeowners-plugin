@@ -7,7 +7,7 @@ data class CodeOwnerRule(
     /** The list of owners of the matched files */
     val owners: List<String>,
     /** The line number of this rule in its CODEOWNERS file */
-    val lineNumber: Int
+    val lineNumber: Int,
 ) {
     companion object {
         /** Parse a CodeOwnerRule from a CODEOWNERS line */

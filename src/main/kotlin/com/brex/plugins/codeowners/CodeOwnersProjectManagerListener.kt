@@ -9,13 +9,15 @@ import com.intellij.openapi.wm.impl.status.widget.StatusBarWidgetsManager
 
 internal class CodeOwnersProjectManagerListener : ProjectManagerListener {
     override fun projectOpened(project: Project) {
-        //TODO: cleanup, create a VFS listener instead?
+        // TODO: cleanup, create a VFS listener instead?
         project.messageBus.connect().subscribe(
             VirtualFileManager.VFS_CHANGES,
             object : BulkFileListener {
                 override fun after(events: MutableList<out VFileEvent>) {
                     super.after(events)
-                    project.getService(StatusBarWidgetsManager::class.java).updateWidget(CodeOwnersWidgetFactory::class.java)
+                    project
+                        .getService(StatusBarWidgetsManager::class.java)
+                        .updateWidget(CodeOwnersWidgetFactory::class.java)
                 }
             }
         )

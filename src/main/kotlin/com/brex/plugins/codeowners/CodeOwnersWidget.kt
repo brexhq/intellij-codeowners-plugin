@@ -18,7 +18,11 @@ import com.intellij.refactoring.listeners.RefactoringEventListener
 import com.intellij.util.Consumer
 import java.awt.event.MouseEvent
 
-class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBarWidget.MultipleTextValuesPresentation, RefactoringEventListener {
+class CodeOwnersWidget(project: Project) :
+    EditorBasedWidget(project),
+    StatusBarWidget.MultipleTextValuesPresentation,
+    RefactoringEventListener {
+
     private var currentOrSelectedFile: VirtualFile? = null
     private var currentFilePath: String? = null
     private var currentFileRule: CodeOwnerRule? = null
@@ -59,12 +63,14 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
             return null
         }
 
-        return JBPopupFactory.getInstance().createListPopup(object : BaseListPopupStep<String>("All CODEOWNERS", owners.owners) {
-            override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<*>? {
-                goToOwner()
-                return super.onChosen(selectedValue, finalChoice)
+        return JBPopupFactory.getInstance().createListPopup(
+            object : BaseListPopupStep<String>("All CODEOWNERS", owners.owners) {
+                override fun onChosen(selectedValue: String?, finalChoice: Boolean): PopupStep<*>? {
+                    goToOwner()
+                    return super.onChosen(selectedValue, finalChoice)
+                }
             }
-        })
+        )
     }
 
     /** Open the CODEOWNERS file, and navigate to the line which defines the owner of the current file */
@@ -94,12 +100,12 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
         myStatusBar.updateWidget(ID())
     }
     // Listen to Editor events and update the status bar when switching or renaming files
-    override fun fileOpened(source: FileEditorManager, file: VirtualFile) {}
     override fun selectionChanged(event: FileEditorManagerEvent) = update(event.newFile)
     override fun undoRefactoring(refactoringId: String) = update(null)
     override fun refactoringDone(refactoringId: String, afterData: RefactoringEventData?) = update(null)
-    override fun refactoringStarted(refactoringId: String, beforeData: RefactoringEventData?) {}
-    override fun conflictsDetected(refactoringId: String, conflictsData: RefactoringEventData) {}
+    override fun fileOpened(source: FileEditorManager, file: VirtualFile) { /* ignored */ }
+    override fun refactoringStarted(refactoringId: String, beforeData: RefactoringEventData?) { /* ignored */ }
+    override fun conflictsDetected(refactoringId: String, conflictsData: RefactoringEventData) { /* ignored */ }
 
     companion object {
         internal const val ID = "org.brex.plugins.codeowners.CodeOwnersWidget"

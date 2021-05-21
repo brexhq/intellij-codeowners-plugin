@@ -5,4 +5,14 @@ formatting:
   Indentation:
     continuationIndentSize: 8
   ParameterListWrapping:
-    indentSize: 8
+    indentSize: 4
+
+complexity:
+  TooManyFunctions:
+    thresholdInClasses: 20
+
+style:
+  ForbiddenComment:
+    active: false
+  ReturnCount:
+    max: 4
