@@ -50,7 +50,9 @@ class CodeOwners(private val project: Project) {
 
     /** Find the top-most module directory which contains the given file */
     private fun getBaseDir(relativeTo: VirtualFile?): String? {
-        val relPath = relativeTo?.toNioPath() ?: return null
+        // Sometimes there are weird paths that aren't actually in the filesystem
+        // TODO: try to verify the files existance some other way?
+        val relPath = try { relativeTo?.toNioPath() } catch (e: Throwable) { return null } ?: return null
         return ModuleManager.getInstance(project).sortedModules
             .mapNotNull { try { it.guessModuleDir()?.toNioPath() } catch (e: Throwable) { return null } }
             .filter { relPath.startsWith(it) }
