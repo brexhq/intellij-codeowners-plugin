@@ -19,6 +19,7 @@ import com.intellij.util.Consumer
 import java.awt.event.MouseEvent
 
 class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBarWidget.MultipleTextValuesPresentation, RefactoringEventListener {
+    private var currentOrSelectedFile: VirtualFile? = null
     private var currentFilePath: String? = null
     private var currentFileRule: CodeOwnerRule? = null
     private val codeOwnersService: CodeOwners = CodeOwners(project)
@@ -33,7 +34,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     override fun getTooltipText() = "Click to show in CODEOWNERS file"
 
     override fun getSelectedValue(): String {
-        if (selectedFile === null) return ""
+        if (currentOrSelectedFile === null) return ""
         val owners = getCurrentCodeOwnerRule()?.owners ?: return "Owner: None"
         val first = owners.first()
         val numOthers = owners.size - 1
@@ -68,7 +69,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
 
     /** Open the CODEOWNERS file, and navigate to the line which defines the owner of the current file */
     private fun goToOwner() {
-        val codeOwnersFile = codeOwnersService.findCodeOwnersFile(selectedFile)
+        val codeOwnersFile = codeOwnersService.findCodeOwnersFile(currentOrSelectedFile)
         val vf = codeOwnersFile?.toPath()?.let { VirtualFileManager.getInstance().findFileByNioPath(it) } ?: return
         OpenFileDescriptor(project, vf, currentFileRule?.lineNumber ?: 0, 0).navigate(true)
     }
@@ -76,7 +77,7 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
     /** Get CodeOwner rule for the currently opened file */
     private fun getCurrentCodeOwnerRule(): CodeOwnerRule? {
         // Reload CodeOwners if the current file has changed
-        val file = selectedFile ?: return null
+        val file = currentOrSelectedFile ?: return null
         if (file.path != currentFilePath) {
             currentFilePath = file.path
             currentFileRule = codeOwnersService.getCodeOwners(file)
@@ -84,12 +85,19 @@ class CodeOwnersWidget(project: Project) : EditorBasedWidget(project), StatusBar
         return currentFileRule
     }
 
+    private fun update(file: VirtualFile?) {
+        // TODO: In theory we should just be able to use this.selectedFile, but for some reason,
+        // sometimes the EditorBasedWidget loses its ability to find the currently selected file.
+        // Therefore, we allow editor events to pass in the switched-to file, which seems to be
+        // more reliable.
+        currentOrSelectedFile = file ?: selectedFile
+        myStatusBar.updateWidget(ID())
+    }
     // Listen to Editor events and update the status bar when switching or renaming files
-    private fun update() = myStatusBar.updateWidget(ID())
-    override fun fileOpened(source: FileEditorManager, file: VirtualFile) = update()
-    override fun selectionChanged(event: FileEditorManagerEvent) = update()
-    override fun undoRefactoring(refactoringId: String) = update()
-    override fun refactoringDone(refactoringId: String, afterData: RefactoringEventData?) = update()
+    override fun fileOpened(source: FileEditorManager, file: VirtualFile) {}
+    override fun selectionChanged(event: FileEditorManagerEvent) = update(event.newFile)
+    override fun undoRefactoring(refactoringId: String) = update(null)
+    override fun refactoringDone(refactoringId: String, afterData: RefactoringEventData?) = update(null)
     override fun refactoringStarted(refactoringId: String, beforeData: RefactoringEventData?) {}
     override fun conflictsDetected(refactoringId: String, conflictsData: RefactoringEventData) {}
 
