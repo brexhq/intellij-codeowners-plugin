@@ -52,7 +52,7 @@ class CodeOwners(private val project: Project) {
     private fun getBaseDir(relativeTo: VirtualFile?): String? {
         val relPath = relativeTo?.toNioPath() ?: return null
         return ModuleManager.getInstance(project).sortedModules
-            .mapNotNull { it.guessModuleDir()?.toNioPath() }
+            .mapNotNull { try { it.guessModuleDir()?.toNioPath() } catch (e: Throwable) { return null } }
             .filter { relPath.startsWith(it) }
             .minBy { it.toList().size }
             .toString()

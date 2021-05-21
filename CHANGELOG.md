@@ -1,5 +1,11 @@
 # CODEOWNERS plugin Changelog
 
+## [0.3.2]
+
+### Fixed
+
+- Fixes an exception being thrown when trying to get the base directory for the module file
+
 ## [0.3.1]
 
 ### Fixed
