@@ -1,5 +1,13 @@
 # CODEOWNERS plugin Changelog
 
+## [0.3.5]
+
+### Fixed
+
+- Some (but not all) of the code and formatting and build issues which are preventing
+  this from passing the IntelliJ Plugin Template's default automated tests. 
+- README typos.
+
 ## [0.3.4]
 
 ### Fixed
