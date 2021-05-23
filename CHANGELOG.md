@@ -1,5 +1,11 @@
 # CODEOWNERS plugin Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Updated Detekt version
+
 ## [0.3.5]
 
 ### Fixed
