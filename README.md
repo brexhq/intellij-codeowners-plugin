@@ -12,8 +12,8 @@ an owner will navigate to the line of the CODEOWNERS file which declares the cur
 
 ### Installing from the IntelliJ Marketplace
 
-This plugin is available in the IntelliJ plugin marketplace! Just open the Plugins page in Preferences, and
-search for "CodeOwners" in the Marketplace tab. 
+This plugin is available from the [IntelliJ plugin marketplace](https://plugins.jetbrains.com/plugin/16819-codeowners)! Just open the Plugins page in Preferences,
+and search for "CodeOwners" in the Marketplace tab. 
 
 ### Installing from the Releases page
 
