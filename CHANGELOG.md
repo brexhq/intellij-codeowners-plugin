@@ -2,9 +2,12 @@
 
 ## [Unreleased]
 
+## [0.3.6]
+
 ### Changed
 
-- Updated Detekt version
+- Updated tooling and dependency versions
+- Working CICD
 
 ## [0.3.5]
 
